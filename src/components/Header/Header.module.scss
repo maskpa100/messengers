@@ -1,4 +1,13 @@
 .header {
   height: 50px;
-  background-color: #d6d6d6;
+  background-color: #3f72af;
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  p {
+    padding-left: 8px;
+  }
 }

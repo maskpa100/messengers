@@ -1,6 +1,6 @@
 .sidebar {
   width: 235px;
-  background-color: #e2e2e2;
+  background-color: #dbe2ef;
   display: flex;
   flex-direction: column;
   .info {
@@ -46,7 +46,8 @@
           margin-left: 5px;
         }
         &:hover {
-          background-color: #a8a8a8;
+          background-color: #c3c1c1;
+          border-radius: 20px;
         }
       }
     }

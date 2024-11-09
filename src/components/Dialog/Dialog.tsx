@@ -57,7 +57,23 @@ const Dialog: React.FC = () => {
               <img src={`/photo/1.jpg`} alt="photo" />
               <div className={s.time}>00:00</div>
             </div>
+            <div className={`${s.text} ${s.read}`}>Привет</div>
+          </div>
+          <div className={s.messageRight}>
+            <div className={s.info}>
+              <img src={`/photo/1.jpg`} alt="photo" />
+              <div className={s.time}>00:00</div>
+            </div>
             <div className={`${s.text} ${s.unread}`}>hi</div>
+          </div>
+          <div className={s.messageLeft}>
+            <div className={s.info}>
+              <img src={`/photo/1.jpg`} alt="photo" />
+              <div className={s.time}>00:00</div>
+            </div>
+            <div className={`${s.text} ${s.unread}`}>
+              Можешь писать по русски
+            </div>
           </div>
         </div>
         <div className={s.chat}>
