@@ -5,6 +5,8 @@ import { TbMessageCircle } from "react-icons/tb";
 import { CiSearch } from "react-icons/ci";
 import { IoMdExit } from "react-icons/io";
 import Cookies from "js-cookie";
+import { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -12,12 +14,13 @@ const Sidebar: React.FC = () => {
     Cookies.remove("token");
     navigate("/login");
   };
+  const auth = useSelector((state: RootState) => state.auth);
   return (
     <>
       <div className={s.sidebar}>
         <div className={s.info}>
-          <img src="/photo/1.jpg" alt="photo" />
-          <div className={s.name}>Александр Владимирович</div>
+          <img src={`/photo/${auth.avatar}`} alt="photo" />
+          <div className={s.name}>{auth.username}</div>
         </div>
         <div className={s.list}>
           <ul>

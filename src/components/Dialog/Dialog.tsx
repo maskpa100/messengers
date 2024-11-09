@@ -5,7 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { VscSend } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { addDialogue } from "../../store/slices/dialoguesSlice";
+import {
+  addDialogue,
+  updateMessagesForUser,
+} from "../../store/slices/dialoguesSlice";
 import { useWebSocket } from "../../WebSocketProvider";
 import Cookies from "js-cookie";
 
@@ -14,7 +17,6 @@ const Dialog: React.FC = () => {
   const [value, setValue] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const token = Cookies.get("token");
 
   const { sendMessage, dataFromServer } = useWebSocket();
   const { id } = useParams<{ id: string }>();
@@ -37,11 +39,7 @@ const Dialog: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    console.log(dataFromServer);
-  }, [dataFromServer]);
-
-  useEffect(() => {
-    if (dataFromServer.type === "NewMessage") {
+    if (dataFromServer && dataFromServer.type === "NewMessage") {
       console.log(
         `пришло сообшения от ${dataFromServer.content.dialog_userId}`
       );
@@ -55,6 +53,13 @@ const Dialog: React.FC = () => {
           },
         };
         sendMessage(message);
+        dispatch(
+          updateMessagesForUser({
+            dialog_userId: id ? Number(id) : 0,
+            from_user: id ? Number(id) : 0,
+            updatedMessage: { delivered: true }, // Изменение поля "delivered" на true
+          })
+        );
       }
     }
   }, [dataFromServer]);
@@ -79,6 +84,13 @@ const Dialog: React.FC = () => {
 
             // Диспатчим действие, только если данные соответствуют ожидаемой структуре
             dispatch(addDialogue(dialogue));
+            dispatch(
+              updateMessagesForUser({
+                dialog_userId: id ? Number(id) : 0,
+                from_user: id ? Number(id) : 0,
+                updatedMessage: { delivered: true }, // Изменение поля "delivered" на true
+              })
+            );
           }
         }
       }
