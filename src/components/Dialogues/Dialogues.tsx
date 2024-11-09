@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import s from "./Dialogues.module.scss";
+import Dialog from "../Dialog/Dialog";
 const Dialogues: React.FC = () => {
   const dialogues = [
     {
@@ -19,6 +20,7 @@ const Dialogues: React.FC = () => {
       volume: 0,
     },
   ];
+  const { id } = useParams();
   return (
     <>
       <div className={s.dialogues}>
@@ -46,6 +48,7 @@ const Dialogues: React.FC = () => {
           ))}
         </ul>
       </div>
+      {id ? <Dialog /> : <div className={s.messages}>Выберите диалог</div>}
     </>
   );
 };

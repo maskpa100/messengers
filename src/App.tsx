@@ -21,15 +21,7 @@ function App() {
         <Sidebar />
         <Routes>
           <Route path="/dialog" element={<Dialogues />} />
-          <Route
-            path="/dialog/:id"
-            element={
-              <>
-                <Dialogues />
-                <Dialog />
-              </>
-            }
-          />
+          <Route path="/dialog/:id" element={<Dialogues />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/search" element={<Search />} />
         </Routes>
