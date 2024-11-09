@@ -1,16 +1,101 @@
 import { useParams } from "react-router-dom";
 import s from "./Dialog.module.scss";
 import { IoIosMore } from "react-icons/io";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { VscSend } from "react-icons/vsc";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { addDialogue } from "../../store/slices/dialoguesSlice";
+import { useWebSocket } from "../../WebSocketProvider";
+import Cookies from "js-cookie";
 
 const Dialog: React.FC = () => {
+  const dispatch = useDispatch();
   const [value, setValue] = useState<string>("");
-  const { id } = useParams();
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const token = Cookies.get("token");
 
+  const { sendMessage, dataFromServer } = useWebSocket();
+  const { id } = useParams<{ id: string }>();
+  const userId = useSelector((state: RootState) => state.auth.userId);
+
+  useEffect(() => {
+    if (loading) {
+      const message = {
+        type: "request",
+        request: {
+          action: "dialogue",
+          dialog_user: String(id),
+        },
+      };
+      console.log(message);
+
+      sendMessage(message);
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    console.log(dataFromServer);
+  }, [dataFromServer]);
+
+  useEffect(() => {
+    if (dataFromServer.type === "NewMessage") {
+      console.log(
+        `пришло сообшения от ${dataFromServer.content.dialog_userId}`
+      );
+      if (dataFromServer.content.dialog_userId === Number(id)) {
+        const message = {
+          type: "request",
+          request: {
+            action: "delivered",
+            dialog_user: Number(id),
+            userId: userId,
+          },
+        };
+        sendMessage(message);
+      }
+    }
+  }, [dataFromServer]);
+
+  useEffect(() => {
+    if (loading === false) {
+      if (dataFromServer && dataFromServer.result) {
+        console.log(dataFromServer);
+        if (dataFromServer.result.type === "dialogue") {
+          // Проверяем, существует ли dialog_user и является ли он массивом
+          const dialogUser = dataFromServer.result.dialog_user;
+          console.log("dialogUser.id", dialogUser.id);
+
+          if (dialogUser.id !== undefined) {
+            const dialogue = {
+              dialog_userId: dialogUser.id,
+              dialog_user: dialogUser, // также один пользователь в диалоге
+              messages: dataFromServer.result.messages,
+              userId: dataFromServer.result.userId,
+            };
+            console.log(dialogue);
+
+            // Диспатчим действие, только если данные соответствуют ожидаемой структуре
+            dispatch(addDialogue(dialogue));
+          }
+        }
+      }
+      setLoading(true);
+    }
+  }, [dataFromServer, dispatch, id]);
+
+  const dialogues = useSelector(
+    (state: RootState) => state.dialogues.dialogues
+  );
+
+  const resultDialogue =
+    Array.isArray(dialogues) && id !== undefined
+      ? dialogues.filter((item) => item.dialog_userId === Number(id))
+      : [];
+
+  // Функция для изменения высоты текстового поля
   const handleInput = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"; // Сброс высоты
@@ -28,6 +113,7 @@ const Dialog: React.FC = () => {
     };
     console.log(message);
     setValue("");
+    sendMessage(message);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -35,14 +121,49 @@ const Dialog: React.FC = () => {
       hendleSend();
     }
   };
+
+  useEffect(() => {
+    handleInput(); // Установка начальной высоты
+  }, [value]);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  };
+  const messages =
+    resultDialogue && resultDialogue.length > 0
+      ? resultDialogue[0].messages
+      : [];
+  useEffect(() => {
+    // Прокручиваем вниз при изменении списка сообщений
+    scrollToBottom();
+  }, [messages]);
+  const auth = useSelector((state: RootState) => state.auth);
+
+  if (resultDialogue.length === 0) {
+    return (
+      <div className={s.messages}>
+        <div className={s.loading}>Loading...</div>
+      </div>
+    );
+  }
   return (
     <>
       <div className={s.messages}>
         <div>
           <div className={s.header}>
             <div className={s.user}>
-              <img src={`/photo/1.jpg`} alt="photo" />
-              <p className={s.name}>{`Александр Владимирович`}</p>
+              <img
+                src={`/photo/${resultDialogue[0]?.dialog_user.avatar}`}
+                alt="photo"
+              />
+              <p
+                className={
+                  s.name
+                }>{`${resultDialogue[0].dialog_user.name} ${resultDialogue[0].dialog_user.family}`}</p>
             </div>
             <div className={s.more}>
               <IoIosMore />
@@ -52,29 +173,37 @@ const Dialog: React.FC = () => {
         </div>
 
         <div className={s.messageContainer} ref={containerRef}>
-          <div className={s.messageRight}>
-            <div className={s.info}>
-              <img src={`/photo/1.jpg`} alt="photo" />
-              <div className={s.time}>00:00</div>
-            </div>
-            <div className={`${s.text} ${s.read}`}>Привет</div>
-          </div>
-          <div className={s.messageRight}>
-            <div className={s.info}>
-              <img src={`/photo/1.jpg`} alt="photo" />
-              <div className={s.time}>00:00</div>
-            </div>
-            <div className={`${s.text} ${s.unread}`}>hi</div>
-          </div>
-          <div className={s.messageLeft}>
-            <div className={s.info}>
-              <img src={`/photo/1.jpg`} alt="photo" />
-              <div className={s.time}>00:00</div>
-            </div>
-            <div className={`${s.text} ${s.unread}`}>
-              Можешь писать по русски
-            </div>
-          </div>
+          {resultDialogue &&
+            resultDialogue.length > 0 &&
+            resultDialogue[0].messages &&
+            resultDialogue[0].messages.length > 0 &&
+            resultDialogue[0].messages.map((item) => (
+              <div
+                key={item.id}
+                className={
+                  item.to_user === Number(id) ? s.messageRight : s.messageLeft
+                }>
+                <div className={s.info}>
+                  <img
+                    src={`/photo/${
+                      item.from_user === Number(id)
+                        ? resultDialogue[0].dialog_user.avatar
+                        : auth.avatar
+                    }`}
+                    alt="photo"
+                  />
+                  <div className={s.time}>00:00</div>
+                </div>
+                <div
+                  className={`${s.text} ${
+                    auth.userId === item.from_user && !item.delivered
+                      ? s.unread
+                      : s.read
+                  }`}>
+                  {item.message}
+                </div>
+              </div>
+            ))}
         </div>
         <div className={s.chat}>
           <hr />
