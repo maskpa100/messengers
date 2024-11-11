@@ -1,21 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/slices/authSlice";
 
-const AuthCheck: React.FC = () => {
+const AuthCheck: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const checkToken = async () => {
       const token = Cookies.get("token");
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
 
       try {
         const res = await fetch("http://localhost:5000/auth/verify-token", {
@@ -27,9 +22,6 @@ const AuthCheck: React.FC = () => {
         });
 
         const data = await res.json();
-        console.log(res.ok);
-        console.log(data.valid);
-        console.log(data);
 
         if (!res.ok || !data.valid) {
           // Токен невалидный
@@ -39,12 +31,13 @@ const AuthCheck: React.FC = () => {
           dispatch(
             setCredentials({
               userId: data.userInfo.userId,
-              username: data.userInfo.name,
+              email: data.userInfo.email,
+              name: data.userInfo.name,
+              family: data.userInfo.family,
               avatar: data.userInfo.avatar,
+              city: data.userInfo.city,
             })
           );
-
-          navigate("/dialog");
         }
       } catch (error) {
         console.error("Ошибка при проверке токена:", error);
@@ -53,9 +46,9 @@ const AuthCheck: React.FC = () => {
     };
 
     checkToken();
-  }, []);
+  }, [dispatch, navigate]);
 
-  return null;
+  return <>{children}</>;
 };
 
 export default AuthCheck;

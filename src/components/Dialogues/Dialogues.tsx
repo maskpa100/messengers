@@ -13,6 +13,8 @@ const Dialogues: React.FC = () => {
   const { sendMessage, dataFromServer } = useWebSocket();
   const webSocket = useSelector((state: RootState) => state.auth.webSocket);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     if (loading && webSocket) {
       const message = {
@@ -65,7 +67,7 @@ const Dialogues: React.FC = () => {
                       <div className={s.left}>
                         <div className={s.photo}>
                           <img
-                            src={`/photo/${item.dialog_user.avatar}`}
+                            src={`${apiUrl}/uploads/${item.dialog_user.avatar}`}
                             alt="photo"
                           />
                         </div>

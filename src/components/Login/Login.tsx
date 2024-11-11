@@ -30,8 +30,11 @@ const Login: React.FC = () => {
         dispatch(
           setCredentials({
             userId: data.user.userId,
-            username: data.user.username,
+            email: data.user.username,
+            name: data.user.name,
+            family: data.user.family,
             avatar: data.user.avatar,
+            city: data.user.city,
           })
         );
         Cookies.set("token", data.token); // Сохраняем токен

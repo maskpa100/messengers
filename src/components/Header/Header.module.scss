@@ -1,13 +1,32 @@
 .header {
+  display: flex;
+  justify-content: space-between;
   height: 50px;
   background-color: #3f72af;
-  display: flex;
-  align-items: center;
   padding-left: 40px;
   font-size: 20px;
   font-weight: 600;
   color: white;
-  p {
-    padding-left: 8px;
+  .left {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    p {
+      padding-left: 8px;
+    }
+  }
+  .right {
+    display: flex;
+    align-items: center;
+    padding-right: 40px;
+    gap: 20px;
+    a {
+      color: white;
+      text-decoration: none;
+      font-size: 19px;
+      &:hover {
+        color: #facbc0;
+      }
+    }
   }
 }

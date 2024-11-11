@@ -9,23 +9,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    .imgUpload {
-      position: relative;
-      padding-top: 34px;
-      svg {
-        color: red;
-        cursor: pointer;
-        font-size: 23px;
-        position: absolute;
-        top: 25px;
-        right: -10px;
-        background-color: white;
-        border-radius: 50%;
-      }
-    }
-    .inputFile {
-      display: none;
-    }
+
     .block {
       text-align: left;
       width: 100%;
@@ -41,16 +25,38 @@
         border-radius: 20px;
       }
     }
-    .button {
-      width: 100%;
-      padding: 10px;
-      font-size: 17px;
-      background-color: #3f72af;
-      border: 0;
-      border-radius: 20px;
-      margin-top: 40px;
-      cursor: pointer;
-      color: white;
+  }
+  .upload {
+    display: flex;
+    justify-content: center;
+    .imgUpload {
+      position: relative;
+      padding-top: 34px;
+      svg {
+        color: red;
+        cursor: pointer;
+        font-size: 23px;
+        position: absolute;
+        top: 25px;
+        right: -10px;
+        background-color: white;
+        border-radius: 50%;
+      }
     }
+
+    .inputFile {
+      display: none;
+    }
+  }
+  .button {
+    width: 100%;
+    padding: 10px;
+    font-size: 17px;
+    background-color: #3f72af;
+    border: 0;
+    border-radius: 20px;
+    margin-top: 40px;
+    cursor: pointer;
+    color: white;
   }
 }

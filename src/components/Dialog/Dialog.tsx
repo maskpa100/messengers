@@ -21,6 +21,7 @@ const Dialog: React.FC = () => {
   const { sendMessage, dataFromServer } = useWebSocket();
   const { id } = useParams<{ id: string }>();
   const userId = useSelector((state: RootState) => state.auth.userId);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (loading) {
@@ -169,7 +170,7 @@ const Dialog: React.FC = () => {
           <div className={s.header}>
             <div className={s.user}>
               <img
-                src={`/photo/${resultDialogue[0]?.dialog_user.avatar}`}
+                src={`${apiUrl}/uploads/${resultDialogue[0]?.dialog_user.avatar}`}
                 alt="photo"
               />
               <p
@@ -197,7 +198,7 @@ const Dialog: React.FC = () => {
                 }>
                 <div className={s.info}>
                   <img
-                    src={`/photo/${
+                    src={`${apiUrl}/uploads/${
                       item.from_user === Number(id)
                         ? resultDialogue[0].dialog_user.avatar
                         : auth.avatar

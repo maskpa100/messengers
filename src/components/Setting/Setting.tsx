@@ -2,6 +2,10 @@ import { useRef, useState } from "react";
 import s from "./Setting.module.scss";
 import ModalImg from "../ModalImg/ModalImg";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { setAvatar } from "../../store/slices/authSlice";
 
 const Setting: React.FC = () => {
   const [croppedImg, setCroppedImg] = useState("");
@@ -9,6 +13,9 @@ const Setting: React.FC = () => {
   const [noImg, setNoImg] = useState(false);
   const [modal, setModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const token = Cookies.get("token");
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -33,18 +40,57 @@ const Setting: React.FC = () => {
     setSelectedImage("");
   };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+
+    const data = {
+      family: formData.get("family"),
+      name: formData.get("name"),
+      avatar: croppedImg,
+      city: formData.get("city"),
+    };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/setting/update-profile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      if (result.status === "ok") {
+        console.log("Данные отправлены");
+        console.log(result);
+        dispatch(setAvatar({ avatar: result.avatar }));
+      }
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
   return (
     <div className={s.setting}>
       <h2>Настройки пользователя</h2>
-      {modal && (
-        <ModalImg
-          setModal={setModal}
-          image={selectedImage}
-          setCroppedImg={setCroppedImg}
-          setNoImg={setNoImg}
-        />
-      )}
-      <div className={s.form}>
+      <div className={s.upload}>
+        {modal && (
+          <ModalImg
+            setModal={setModal}
+            image={selectedImage}
+            setCroppedImg={setCroppedImg}
+            setNoImg={setNoImg}
+          />
+        )}
         <input
           className={s.inputFile}
           type="file"
@@ -70,21 +116,42 @@ const Setting: React.FC = () => {
             Загрузить изображение
           </button>
         )}
-
+      </div>
+      <form className={s.form} onSubmit={handleSubmit}>
         <div className={s.block}>
           <label htmlFor="family">Фамилия:</label>
-          <input id="family" type="text" placeholder="Введите фамилию" />
+          <input
+            id="family"
+            type="text"
+            name="family"
+            placeholder="Введите фамилию"
+            defaultValue={auth.family}
+          />
         </div>
         <div className={s.block}>
           <label htmlFor="name">Имя:</label>
-          <input id="name" type="text" placeholder="Введите имя" />
+          <input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="Введите имя"
+            defaultValue={auth.name}
+          />
         </div>
         <div className={s.block}>
           <label htmlFor="city">Город:</label>
-          <input id="city" type="text" placeholder="Введите город" />
+          <input
+            id="city"
+            type="text"
+            name="city"
+            placeholder="Введите город"
+            defaultValue={auth.city}
+          />
         </div>
-        <button className={s.button}>Сохранить</button>
-      </div>
+        <button className={s.button} type="submit">
+          Сохранить
+        </button>
+      </form>
     </div>
   );
 };

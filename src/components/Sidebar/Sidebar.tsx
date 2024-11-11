@@ -10,6 +10,9 @@ import { useSelector } from "react-redux";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const exit = () => {
     Cookies.remove("token");
     navigate("/login");
@@ -19,8 +22,8 @@ const Sidebar: React.FC = () => {
     <>
       <div className={s.sidebar}>
         <div className={s.info}>
-          <img src={`/photo/${auth.avatar}`} alt="photo" />
-          <div className={s.name}>{auth.username}</div>
+          <img src={`${apiUrl}/uploads/${auth.avatar}`} alt="photo" />
+          <div className={s.name}>{auth.email}</div>
         </div>
         <div className={s.list}>
           <ul>
