@@ -2,4 +2,63 @@
   background-color: white;
   display: flex;
   flex: 1;
+  flex-direction: column;
+  form {
+    display: flex;
+    justify-content: center;
+    .block {
+      display: flex;
+      input {
+        margin: 10px;
+        padding: 5px;
+      }
+    }
+    button {
+      margin: 10px;
+      padding: 5px 8px;
+      background-color: #3f72af;
+      border: 0;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  }
+  .users {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    .user {
+      width: 365px;
+      background-color: #eaeaea;
+      padding: 20px;
+      border-radius: 30px;
+      display: flex;
+      margin: 20px;
+      @media (max-width: 1065px) {
+        width: 80%;
+        min-width: 365px;
+      }
+      .left {
+        img {
+          width: 100px;
+          height: 100px;
+          border-radius: 30px;
+        }
+      }
+      .right {
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        flex: 1;
+        justify-content: space-around;
+        .name {
+          font-weight: 600;
+        }
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }

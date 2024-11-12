@@ -21,23 +21,22 @@ const Dialog: React.FC = () => {
   const { sendMessage, dataFromServer } = useWebSocket();
   const { id } = useParams<{ id: string }>();
   const userId = useSelector((state: RootState) => state.auth.userId);
+  const webSocket = useSelector((state: RootState) => state.auth.webSocket);
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    if (loading) {
-      const message = {
-        type: "request",
-        request: {
-          action: "dialogue",
-          dialog_user: String(id),
-        },
-      };
-      console.log(message);
+    const message = {
+      type: "request",
+      request: {
+        action: "dialogue",
+        dialog_user: String(id),
+      },
+    };
+    console.log(message);
 
-      sendMessage(message);
-      setLoading(false);
-    }
-  }, [id]);
+    sendMessage(message);
+    setLoading(false);
+  }, [id, webSocket]);
 
   useEffect(() => {
     if (dataFromServer && dataFromServer.type === "NewMessage") {
@@ -66,35 +65,34 @@ const Dialog: React.FC = () => {
   }, [dataFromServer]);
 
   useEffect(() => {
-    if (loading === false) {
-      if (dataFromServer && dataFromServer.result) {
-        console.log(dataFromServer);
-        if (dataFromServer.result.type === "dialogue") {
-          // Проверяем, существует ли dialog_user и является ли он массивом
-          const dialogUser = dataFromServer.result.dialog_user;
-          console.log("dialogUser.id", dialogUser.id);
+    if (dataFromServer && dataFromServer.result) {
+      console.log(dataFromServer);
+      if (dataFromServer.result.type === "dialogue") {
+        // Проверяем, существует ли dialog_user и является ли он массивом
+        const dialogUser = dataFromServer.result.dialog_user;
+        console.log("dialogUser.id", dialogUser.id);
 
-          if (dialogUser.id !== undefined) {
-            const dialogue = {
-              dialog_userId: dialogUser.id,
-              dialog_user: dialogUser, // также один пользователь в диалоге
-              messages: dataFromServer.result.messages,
-              userId: dataFromServer.result.userId,
-            };
-            console.log(dialogue);
+        if (dialogUser.id !== undefined) {
+          const dialogue = {
+            dialog_userId: dialogUser.id,
+            dialog_user: dialogUser, // также один пользователь в диалоге
+            messages: dataFromServer.result.messages,
+            userId: dataFromServer.result.userId,
+          };
+          console.log(dialogue);
 
-            // Диспатчим действие, только если данные соответствуют ожидаемой структуре
-            dispatch(addDialogue(dialogue));
-            dispatch(
-              updateMessagesForUser({
-                dialog_userId: id ? Number(id) : 0,
-                from_user: id ? Number(id) : 0,
-                updatedMessage: { delivered: true }, // Изменение поля "delivered" на true
-              })
-            );
-          }
+          // Диспатчим действие, только если данные соответствуют ожидаемой структуре
+          dispatch(addDialogue(dialogue));
+          dispatch(
+            updateMessagesForUser({
+              dialog_userId: id ? Number(id) : 0,
+              from_user: id ? Number(id) : 0,
+              updatedMessage: { delivered: true }, // Изменение поля "delivered" на true
+            })
+          );
         }
       }
+
       setLoading(true);
     }
   }, [dataFromServer, dispatch, id]);

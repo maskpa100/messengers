@@ -126,6 +126,7 @@ const Setting: React.FC = () => {
             name="family"
             placeholder="Введите фамилию"
             defaultValue={auth.family}
+            required
           />
         </div>
         <div className={s.block}>
@@ -136,6 +137,7 @@ const Setting: React.FC = () => {
             name="name"
             placeholder="Введите имя"
             defaultValue={auth.name}
+            required
           />
         </div>
         <div className={s.block}>
@@ -146,6 +148,7 @@ const Setting: React.FC = () => {
             name="city"
             placeholder="Введите город"
             defaultValue={auth.city}
+            required
           />
         </div>
         <button className={s.button} type="submit">

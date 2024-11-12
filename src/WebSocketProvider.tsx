@@ -32,6 +32,15 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const token = Cookies.get("token");
   const dispatch = useDispatch();
 
+  let hasUserInteracted = false;
+
+  const handleUserInteraction = () => {
+    hasUserInteracted = true;
+    document.removeEventListener("click", handleUserInteraction);
+  };
+
+  document.addEventListener("click", handleUserInteraction);
+
   const userId = useSelector((state: RootState) => state.auth.userId);
   useEffect(() => {
     if (userId !== 0) {
@@ -57,6 +66,19 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
           console.log("ooo");
 
           dispatch(addDialogue(dialogue));
+
+          if (hasUserInteracted) {
+            const audio = new Audio("/new_message.mp3");
+            audio
+              .play()
+              .catch((err) =>
+                console.error("Ошибка при воспроизведении звука:", err)
+              );
+          } else {
+            console.log(
+              "Звук не воспроизведен из-за отсутствия взаимодействия с пользователем"
+            );
+          }
         }
         if (message.type === "delivered") {
           console.log("все прочитаные");
