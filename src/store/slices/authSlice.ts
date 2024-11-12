@@ -1,6 +1,7 @@
 // src/store/slices/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface Auth {
+  auth: string | undefined;
   userId: number;
   email: string;
   avatar: string;
@@ -10,6 +11,7 @@ interface Auth {
   city: string;
 }
 const initialState: Auth = {
+  auth: undefined,
   userId: 0,
   email: "",
   avatar: "",
@@ -32,15 +34,18 @@ const authSlice = createSlice({
         name: string;
         avatar: string;
         city: string;
+        auth: string | undefined;
       }>
     ) {
-      const { userId, email, family, name, avatar, city } = action.payload;
+      const { userId, email, family, name, avatar, city, auth } =
+        action.payload;
       state.userId = userId;
       state.email = email;
       state.avatar = avatar;
       state.city = city;
       state.family = family;
       state.name = name;
+      state.auth = auth;
     },
     setWebSocket(
       state,
@@ -60,8 +65,18 @@ const authSlice = createSlice({
       const { avatar } = action.payload;
       state.avatar = avatar;
     },
+    setAuth(
+      state,
+      action: PayloadAction<{
+        auth: string;
+      }>
+    ) {
+      const { auth } = action.payload;
+      state.auth = auth;
+    },
   },
 });
 
-export const { setCredentials, setWebSocket, setAvatar } = authSlice.actions;
+export const { setCredentials, setWebSocket, setAvatar, setAuth } =
+  authSlice.actions;
 export default authSlice.reducer;

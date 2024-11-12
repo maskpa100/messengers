@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../store/slices/authSlice";
+import { setAuth, setCredentials } from "../store/slices/authSlice";
 
-const AuthCheck: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AuthCheck: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -27,6 +27,7 @@ const AuthCheck: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           // Токен невалидный
           Cookies.remove("token");
           navigate("/login");
+          dispatch(setAuth({ auth: "no" }));
         } else {
           dispatch(
             setCredentials({
@@ -36,19 +37,21 @@ const AuthCheck: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               family: data.userInfo.family,
               avatar: data.userInfo.avatar,
               city: data.userInfo.city,
+              auth: "yes",
             })
           );
         }
       } catch (error) {
         console.error("Ошибка при проверке токена:", error);
         navigate("/login");
+        dispatch(setAuth({ auth: "no" }));
       }
     };
 
     checkToken();
-  }, [dispatch, navigate]);
+  }, [dispatch]);
 
-  return <>{children}</>;
+  return null;
 };
 
 export default AuthCheck;

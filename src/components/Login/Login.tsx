@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 
 import { useState } from "react";
-import { setCredentials } from "../../store/slices/authSlice";
+import { setAuth, setCredentials } from "../../store/slices/authSlice";
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +35,7 @@ const Login: React.FC = () => {
             family: data.user.family,
             avatar: data.user.avatar,
             city: data.user.city,
+            auth: "yes",
           })
         );
         Cookies.set("token", data.token); // Сохраняем токен
@@ -42,9 +43,11 @@ const Login: React.FC = () => {
       } else {
         console.error("Login failed:", data.message);
         alert("Login failed: " + data.message);
+        dispatch(setAuth({ auth: "no" }));
       }
     } catch (error) {
       console.error("Error during login:", error);
+      dispatch(setAuth({ auth: "no" }));
     }
   };
 

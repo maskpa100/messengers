@@ -13,54 +13,25 @@ import Search from "./components/Search/Search";
 import Login from "./components/Login/Login";
 import AuthCheck from "./components/AuthCheck";
 import Registration from "./components/Registration/Registration";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/store";
 function App() {
-  const location = useLocation();
-  const isLoginPage =
-    location.pathname === "/login" || location.pathname === "/registration";
+  const auth = useSelector((state: RootState) => state.auth);
+  const isAuth = auth.auth && auth.auth === "yes";
   return (
     <div className={s.App}>
+      <AuthCheck />
       <Header />
+
       <div className={s.mainContainer}>
-        {!isLoginPage && (
-          <AuthCheck>
-            <Sidebar />
-          </AuthCheck>
-        )}
+        {isAuth && <Sidebar />}
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
-          <Route
-            path="/dialog"
-            element={
-              <AuthCheck>
-                <Dialogues />
-              </AuthCheck>
-            }
-          />
-          <Route
-            path="/dialog/:id"
-            element={
-              <AuthCheck>
-                <Dialogues />
-              </AuthCheck>
-            }
-          />
-          <Route
-            path="/setting"
-            element={
-              <AuthCheck>
-                <Setting />
-              </AuthCheck>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <AuthCheck>
-                <Search />
-              </AuthCheck>
-            }
-          />
+          <Route path="/dialog" element={isAuth && <Dialogues />} />
+          <Route path="/dialog/:id" element={isAuth && <Dialogues />} />
+          <Route path="/setting" element={isAuth && <Setting />} />
+          <Route path="/search" element={isAuth && <Search />} />
         </Routes>
       </div>
     </div>

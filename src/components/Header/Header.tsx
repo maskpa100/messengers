@@ -5,9 +5,7 @@ import { RootState } from "../../store/store";
 import { useLocation } from "react-router-dom";
 const Header: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
-  const location = useLocation();
-  const isLoginPage =
-    location.pathname === "/login" || location.pathname === "/registration";
+  const notAuth = auth.auth && auth.auth === "no";
   return (
     <>
       <div className={s.header}>
@@ -15,7 +13,7 @@ const Header: React.FC = () => {
           <BiMessageSquareDetail />
           <p>Веб мессенджер</p>
         </div>
-        {isLoginPage && (
+        {notAuth && (
           <div className={s.right}>
             <a href="/login">Авторизация</a>
             <a href="/registration">Регистрация</a>
