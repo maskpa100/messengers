@@ -31,7 +31,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const token = Cookies.get("token");
   const dispatch = useDispatch();
-  const wsUrl = process.env.REACT_APP_API_URL;
+  const wsUrl = process.env.REACT_APP_WS_URL;
 
   let hasUserInteracted = false;
 
