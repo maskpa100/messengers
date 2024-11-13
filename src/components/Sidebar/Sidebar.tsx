@@ -6,16 +6,18 @@ import { CiSearch } from "react-icons/ci";
 import { IoMdExit } from "react-icons/io";
 import Cookies from "js-cookie";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth } from "../../store/slices/authSlice";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const exit = () => {
     Cookies.remove("token");
     navigate("/login");
+    dispatch(setAuth({ auth: "no" }));
   };
   const auth = useSelector((state: RootState) => state.auth);
   return (
@@ -23,7 +25,10 @@ const Sidebar: React.FC = () => {
       <div className={s.sidebar}>
         <div className={s.info}>
           <img src={`${apiUrl}/uploads/${auth.avatar}`} alt="photo" />
-          <div className={s.name}>{auth.email}</div>
+          <div className={s.name}>
+            {auth.family} {auth.name}
+          </div>
+          <div className={s.city}>{auth.city}</div>
         </div>
         <div className={s.list}>
           <ul>

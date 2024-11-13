@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import s from "./Header.module.scss";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { RootState } from "../../store/store";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const Header: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const notAuth = auth.auth && auth.auth === "no";
@@ -15,8 +15,8 @@ const Header: React.FC = () => {
         </div>
         {notAuth && (
           <div className={s.right}>
-            <a href="/login">Авторизация</a>
-            <a href="/registration">Регистрация</a>
+            <Link to="/login">Авторизация</Link>
+            <Link to="/registration">Регистрация</Link>
           </div>
         )}
       </div>

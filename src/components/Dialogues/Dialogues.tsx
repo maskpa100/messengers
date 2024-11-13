@@ -51,6 +51,15 @@ const Dialogues: React.FC = () => {
       (msg) => msg.from_user === from_user && !msg.delivered
     ).length;
   }
+
+  function timeFormat(dateString: string) {
+    const date = new Date(dateString);
+
+    const day = date.getUTCDate();
+    const month = date.toLocaleString("ru-RU", { month: "short" });
+    return `${day} ${month}`;
+  }
+
   return (
     <>
       <div className={s.dialogues}>
@@ -83,12 +92,22 @@ const Dialogues: React.FC = () => {
                                     .from_user && "Вы: "
                               : ""}
                             {item.messages.length > 0 &&
-                              item.messages[item.messages.length - 1].message}
+                              item.messages[
+                                item.messages.length - 1
+                              ].message.slice(0, 25) +
+                                (item.messages[item.messages.length - 1].message
+                                  .length > 25
+                                  ? "..."
+                                  : "")}
                           </div>
                         </div>
                       </div>
                       <div className={s.time}>
-                        <span>16 окт</span>
+                        <span>
+                          {timeFormat(
+                            item.messages[item.messages.length - 1].time
+                          )}
+                        </span>
                         {countUnreadMessages(
                           item.messages,
                           item.dialog_userId,

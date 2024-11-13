@@ -161,6 +161,15 @@ const Dialog: React.FC = () => {
       </div>
     );
   }
+
+  function timeFormat(dateString: string) {
+    const date = new Date(dateString);
+
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+
+    return `${hours}:${minutes}`;
+  }
   return (
     <>
       <div className={s.messages}>
@@ -203,7 +212,7 @@ const Dialog: React.FC = () => {
                     }`}
                     alt="photo"
                   />
-                  <div className={s.time}>00:00</div>
+                  <div className={s.time}>{timeFormat(item.time)}</div>
                 </div>
                 <div
                   className={`${s.text} ${

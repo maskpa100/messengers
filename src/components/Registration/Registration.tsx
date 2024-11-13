@@ -2,13 +2,15 @@ import { useState } from "react";
 import s from "./Registration.module.scss";
 import { BiHide } from "react-icons/bi";
 import { BiShow } from "react-icons/bi";
+import Modal from "./Modal/Modal";
 
 function Registration() {
   const [visibilityPassword, setVisibilityPassword] = useState(false);
   const [visibilityPassword2, setVisibilityPassword2] = useState(false);
   const [typePassword, setTypePassword] = useState("password");
   const [typePassword2, setTypePassword2] = useState("password");
-
+  const [modal, setModal] = useState(false);
+  const apiUrl = process.env.REACT_APP_API_URL;
   const handleShowPassword2 = () => {
     setVisibilityPassword2(true);
     setTypePassword2("text");
@@ -31,17 +33,37 @@ function Registration() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    const data = {
-      family: formData.get("family"),
-      name: formData.get("name"),
-      city: formData.get("city"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-    console.log(data);
+    try {
+      const dataRegistration = {
+        family: formData.get("family"),
+        name: formData.get("name"),
+        city: formData.get("city"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+      };
+      const response = await fetch(`${apiUrl}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataRegistration),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setModal(true);
+      } else {
+        console.error("Login failed:", data);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
   return (
     <div className={s.registration}>
+      {modal && <Modal setModal={setModal} />}
+
       <div className={s.login}>
         <form onSubmit={handleSubmit}>
           <h1>Регистрация</h1>
