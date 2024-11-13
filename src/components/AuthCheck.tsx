@@ -7,13 +7,13 @@ import { setAuth, setCredentials } from "../store/slices/authSlice";
 const AuthCheck: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const checkToken = async () => {
       const token = Cookies.get("token");
 
       try {
-        const res = await fetch("http://localhost:5000/auth/verify-token", {
+        const res = await fetch(`${apiUrl}/auth/verify-token`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

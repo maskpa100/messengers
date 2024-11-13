@@ -31,6 +31,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const token = Cookies.get("token");
   const dispatch = useDispatch();
+  const wsUrl = process.env.REACT_APP_API_URL;
 
   let hasUserInteracted = false;
 
@@ -44,7 +45,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const userId = useSelector((state: RootState) => state.auth.userId);
   useEffect(() => {
     if (userId !== 0) {
-      const ws = new WebSocket(`ws://localhost:8081?token=${token}`); // Замените на URL вашего WebSocket сервера
+      const ws = new WebSocket(`${wsUrl}?token=${token}`); // Замените на URL вашего WebSocket сервера
       setSocket(ws);
 
       ws.onopen = () => {

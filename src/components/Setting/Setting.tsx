@@ -16,6 +16,7 @@ const Setting: React.FC = () => {
   const token = Cookies.get("token");
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -52,17 +53,14 @@ const Setting: React.FC = () => {
       city: formData.get("city"),
     };
     try {
-      const response = await fetch(
-        "http://localhost:5000/setting/update-profile",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${apiUrl}/setting/update-profile`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
